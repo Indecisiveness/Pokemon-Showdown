@@ -8338,7 +8338,7 @@ exports.BattleMovedex = {
 	},
 	"iciclecrash": {
 		num: 556,
-		accuracy: 90,
+		accuracy: 100,
 		basePower: 85,
 		category: "Physical",
 		desc: "Has a 30% chance to flinch the target.",
@@ -13379,7 +13379,7 @@ exports.BattleMovedex = {
 	},
 	"rockslide": {
 		num: 157,
-		accuracy: 90,
+		accuracy: 100,
 		basePower: 75,
 		category: "Physical",
 		desc: "Has a 30% chance to flinch the target.",
@@ -15830,7 +15830,7 @@ exports.BattleMovedex = {
 			},
 			onSwitchIn: function (pokemon) {
 				let typeMod = this.clampIntRange(pokemon.runEffectiveness('Rock'), -6, 6);
-				this.damage(pokemon.maxhp * Math.pow(2, typeMod) / 8);
+				this.damage(pokemon.maxhp * Math.pow(1.41, typeMod) / 8);
 			},
 		},
 		secondary: false,
