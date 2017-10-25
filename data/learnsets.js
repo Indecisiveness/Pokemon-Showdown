@@ -17175,6 +17175,7 @@ exports.BattleLearnsets = {
 		mirrorcoat: ["7L33", "6L33", "5L57", "4L57"],
 		mudslap: ["4T"],
 		naturalgift: ["4M"],
+		psyshock: ["7L50"],
 		protect: ["7M", "6M", "5M", "4M"],
 		quickattack: ["7L13", "6L13", "5L22", "4L22"],
 		raindance: ["7M", "6M", "5M", "4M"],
