@@ -3110,21 +3110,19 @@ exports.BattleAbilities = {
 		num: 97,
 	},
 	"snowcloak": {
-		desc: "If Hail is active, this Pokemon's evasiveness is multiplied by 1.25. This Pokemon takes no damage from Hail.",
-		shortDesc: "If Hail is active, this Pokemon's evasiveness is 1.25x; immunity to Hail.",
+		desc: "Prevents secondary effects on attacking moves and prevents hail damage",
+		shortDesc: "This Pokemon is not affected by the secondary effect of another Pokemon's attack or by hail damage.",
 		onImmunity: function (type, pokemon) {
 			if (type === 'hail') return false;
+		onModifySecondaries: function (secondaries) {
+			this.debug('Snow Cloak prevent secondary');
+			return secondaries.filter(effect => !!(effect.self || effect.dustproof));
 		},
-		onModifyAccuracy: function (accuracy) {
-			if (typeof accuracy !== 'number') return;
-			if (this.isWeather('hail')) {
-				this.debug('Snow Cloak - decreasing accuracy');
-				return accuracy * 0.8;
 			}
 		},
 		id: "snowcloak",
 		name: "Snow Cloak",
-		rating: 1.5,
+		rating: 2.5,
 		num: 81,
 	},
 	"snowwarning": {

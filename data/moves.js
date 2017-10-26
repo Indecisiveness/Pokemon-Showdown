@@ -15636,7 +15636,7 @@ exports.BattleMovedex = {
 		multihit: [2, 5],
 		secondary: false,
 		target: "normal",
-		type: "Normal",
+		type: "Water",
 		zMovePower: 100,
 		contestType: "Cool",
 	},
