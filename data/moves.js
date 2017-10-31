@@ -823,15 +823,15 @@ exports.BattleMovedex = {
 		accuracy: 100,
 		basePower: 65,
 		category: "Special",
-		desc: "Has a 10% chance to lower the target's Attack by 1 stage.",
-		shortDesc: "10% chance to lower the foe's Attack by 1.",
+		desc: "Lowers the target's Attack by 1 stage.",
+		shortDesc: "Lowers the foe's Attack by 1.",
 		id: "aurorabeam",
 		name: "Aurora Beam",
 		pp: 20,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
 		secondary: {
-			chance: 10,
+			chance: 100,
 			boosts: {
 				atk: -1,
 			},
@@ -6223,26 +6223,16 @@ exports.BattleMovedex = {
 		accuracy: true,
 		basePower: 0,
 		category: "Status",
-		desc: "Raises the user's Special Attack, Special Defense, and Speed by 2 stages. This attack charges on the first turn and executes on the second. If the user is holding a Power Herb, the move completes in one turn.",
-		shortDesc: "Charges, then raises SpA, SpD, Spe by 2 turn 2.",
+		desc: "Raises the user's Special Attack, Special Defense, and Speed by 2 stages. The user must recharge on the next turn.",
+		shortDesc: "Raises SpA, SpD, Spe by 2, then user must recharge.",
 		id: "geomancy",
 		isViable: true,
 		name: "Geomancy",
 		pp: 10,
 		priority: 0,
-		flags: {charge: 1, nonsky: 1},
-		onTry: function (attacker, defender, move) {
-			if (attacker.removeVolatile(move.id)) {
-				return;
-			}
-			this.add('-prepare', attacker, move.name, defender);
-			if (!this.runEvent('ChargeMove', attacker, defender, move)) {
-				this.add('-anim', attacker, move.name, defender);
-				attacker.removeVolatile(move.id);
-				return;
-			}
-			attacker.addVolatile('twoturnmove', defender);
-			return null;
+		flags: {recharge: 1, nonsky: 1},
+		self: {
+			volatileStatus: 'mustrecharge',
 		},
 		boosts: {
 			spa: 2,
@@ -7423,15 +7413,18 @@ exports.BattleMovedex = {
 			return move.basePower;
 		},
 		category: "Special",
-		desc: "Power doubles if the target has a major status condition.",
-		shortDesc: "Power doubles if the target has a status ailment.",
+		desc: "Power doubles if the target has a major status condition. Inflicts burn 20% of the time",
+		shortDesc: "Power doubles if the target has a status ailment. 20% chance to burn",
+		secondary: {
+			chance: 10,
+			status: 'brn',
+		},
 		id: "hex",
 		isViable: true,
 		name: "Hex",
 		pp: 10,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
-		secondary: false,
 		target: "normal",
 		type: "Ghost",
 		zMovePower: 160,
@@ -11531,41 +11524,17 @@ exports.BattleMovedex = {
 	"phantomforce": {
 		num: 566,
 		accuracy: 100,
-		basePower: 90,
+		basePower: 120,
 		category: "Physical",
-		desc: "If this move is successful, it breaks through the target's Baneful Bunker, Detect, King's Shield, Protect, or Spiky Shield for this turn, allowing other Pokemon to attack the target normally. If the target's side is protected by Crafty Shield, Mat Block, Quick Guard, or Wide Guard, that protection is also broken for this turn and other Pokemon may attack the target's side normally. This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks. If the user is holding a Power Herb, the move completes in one turn. Damage doubles and no accuracy check is done if the target has used Minimize while active.",
-		shortDesc: "Disappears turn 1. Hits turn 2. Breaks protection.",
+		desc: "If the target lost HP, the user takes recoil damage equal to 33% the HP lost by the target, rounded half up, but not less than 1 HP.",
+		shortDesc: "Has 33% recoil.",
 		id: "phantomforce",
 		name: "Phantom Force",
-		pp: 10,
+		isViable: true,
+		pp: 15,
 		priority: 0,
-		flags: {contact: 1, charge: 1, mirror: 1},
-		breaksProtect: true,
-		onTry: function (attacker, defender, move) {
-			if (attacker.removeVolatile(move.id)) {
-				return;
-			}
-			this.add('-prepare', attacker, move.name, defender);
-			if (!this.runEvent('ChargeMove', attacker, defender, move)) {
-				this.add('-anim', attacker, move.name, defender);
-				return;
-			}
-			attacker.addVolatile('twoturnmove', defender);
-			return null;
-		},
-		effect: {
-			duration: 2,
-			onAccuracy: function (accuracy, target, source, move) {
-				if (move.id === 'helpinghand') {
-					return;
-				}
-				if (source.hasAbility('noguard') || target.hasAbility('noguard')) {
-					return;
-				}
-				if (source.volatiles['lockon'] && target === source.volatiles['lockon'].source) return;
-				return 0;
-			},
-		},
+		flags: {contact: 1, protect: 1, mirror: 1},
+		recoil: [33, 100],
 		secondary: false,
 		target: "normal",
 		type: "Ghost",
@@ -13862,8 +13831,8 @@ exports.BattleMovedex = {
 		accuracy: 100,
 		basePower: 80,
 		category: "Special",
-		desc: "Has a 30% chance to burn the target. The target thaws out if it is frozen.",
-		shortDesc: "30% chance to burn the target. Thaws target.",
+		desc: "Has a 10% chance to burn the target. The target thaws out if it is frozen.",
+		shortDesc: "10% chance to burn the target. Thaws target.",
 		id: "scald",
 		isViable: true,
 		name: "Scald",
@@ -13872,7 +13841,7 @@ exports.BattleMovedex = {
 		flags: {protect: 1, mirror: 1, defrost: 1},
 		thawsTarget: true,
 		secondary: {
-			chance: 30,
+			chance: 10,
 			status: 'brn',
 		},
 		target: "normal",
@@ -14229,7 +14198,7 @@ exports.BattleMovedex = {
 	"shadowpunch": {
 		num: 325,
 		accuracy: true,
-		basePower: 60,
+		basePower: 75,
 		category: "Physical",
 		desc: "This move does not check accuracy.",
 		shortDesc: "This move does not check accuracy.",

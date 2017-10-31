@@ -3114,11 +3114,10 @@ exports.BattleAbilities = {
 		shortDesc: "This Pokemon is not affected by the secondary effect of another Pokemon's attack or by hail damage.",
 		onImmunity: function (type, pokemon) {
 			if (type === 'hail') return false;
+		},
 		onModifySecondaries: function (secondaries) {
 			this.debug('Snow Cloak prevent secondary');
 			return secondaries.filter(effect => !!(effect.self || effect.dustproof));
-		},
-			}
 		},
 		id: "snowcloak",
 		name: "Snow Cloak",
@@ -3917,15 +3916,24 @@ exports.BattleAbilities = {
 		num: 199,
 	},
 	"watercompaction": {
-		shortDesc: "This Pokemon's Defense is raised 2 stages after it is damaged by a Water-type move.",
-		onAfterDamage: function (damage, target, source, effect) {
-			if (effect && effect.type === 'Water') {
-				this.boost({def:2});
+		desc: "This Pokemon is immune to Water-type moves and raises its Defense by 1 stage when hit by a Water-type move.",
+		shortDesc: "This Pokemon's Defense is raised 1 stage if hit by a Water move; Water immunity.",
+		onTryHitPriority: 1,
+		onTryHit: function (target, source, move) {
+			if (target !== source && move.type === 'Water') {
+				if (!this.boost({def:1})) {
+					this.add('-immune', target, '[msg]', '[from] ability: Water Compaction');
+				}
+				return null;
 			}
 		},
-		id: "watercompaction",
-		name: "Water Compaction",
-		rating: 2,
+		onAllyTryHitSide: function (target, source, move) {
+			if (target === this.effectData.target || target.side !== source.side) return;
+			if (move.type === 'Water') {
+				this.boost({def:1}, this.effectData.target);
+			}
+		},
+		rating: 3.5,
 		num: 195,
 	},
 	"waterveil": {
